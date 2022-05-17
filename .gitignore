@@ -1,2 +1,7 @@
-sources/
 Reports/
+
+.Rproj.user/
+sources/
+.Rhistory
+Practical_works.Rproj
+Laboratory_works.Rproj
