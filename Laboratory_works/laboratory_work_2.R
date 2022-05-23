@@ -22,3 +22,7 @@ prognos <- c(rep(0,12), Nnet$fitted.values)
 ggplot(scripts, aes(x)) +
   geom_line(aes(y=scripts), color="blue", size = 2) +
   geom_line(aes(y=prognos), color="red", size = 0.5)
+
+library(NeuralNetTools)
+# Архитектура сети
+plotnet(Nnet)
