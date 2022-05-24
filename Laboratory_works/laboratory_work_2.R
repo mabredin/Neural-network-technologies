@@ -13,7 +13,7 @@ for (i in 1:(n-12)) LearnSeq[i, ] <- scripts[i:(12 + i)]
 
 # Обучение сети Nnet
 set.seed(55)
-Nnet <- nnet(LearnSeq[,1:12], LearnSeq[,13], size = 60, linout = TRUE, rang=0.4, maxit = 300)
+Nnet <- nnet(LearnSeq[,1:12], LearnSeq[,13], size = 67, linout = TRUE, rang=0, maxit = 1000)
 
 # Прогноз составленный обученной сетью Nnet
 prognos <- c(rep(0,12), Nnet$fitted.values)
