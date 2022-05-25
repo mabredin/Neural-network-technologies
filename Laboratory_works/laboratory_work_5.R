@@ -52,25 +52,11 @@ ResultRBM <- function(test, model, layers = 1) {
 }
 
 VisToHid <- function(vis, weights, y, y.weights) {
-  # Function for calculating a hidden layer.
-  #
-  # Args:
-  #   vis: Visual layer, or hidden layer from previous layer in DBN
-  #   weights: Trained weights including the bias terms (use RBM)
-  #   y: Label vector if only when training an RBM for classification
-  #   y.weights: Label weights and bias matrix, only neccessary when training a RBM for classification
-  #
-  # Returns:
-  #   Returns a hidden layer calculated with the trained RBM weights and bias terms.
-  #
-  # Initialize the visual, or i-1 layer
   V0 <- vis
   if ( is.null(dim(V0))) {
-    # If visual is a vector create matrix
     V0 <- matrix(V0, nrow= length(V0))
   }
   if(missing(y) & missing(y.weights)) {
-    # Calculate the hidden layer with the trained weights and bias
     H <- 1/(1 + exp(-( V0 %*% weights))) 
   } else {
     Y0 <- y
@@ -80,23 +66,10 @@ VisToHid <- function(vis, weights, y, y.weights) {
 }
 
 HidToVis <- function(inv, weights, y.weights) {
-  # Function for reconstructing a visible layer.
-  #
-  # Args:
-  #   inv: Invisible layer
-  #   vis.bias: Trained visible layer bias (use RBM)
-  #   weights: Trained weights (use RBM)
-  #   y.weights: Label weights, only nessecessary when training a classification RBM.
-  #
-  # Returns:
-  #   Returns a vector with reconstructed visible layer or reconstructed labels.
-  #
   if(missing(y.weights)) {
-    # Reconstruct only the visible layer when y.weights is missing
     V <- 1/(1 + exp(-(   inv %*% t(weights)) ))
     return(V)
   } else {
-    # Reconstruct visible and labels if y.weights
     Y <- 1/(1 + exp(-( inv %*% t(y.weights)))) 
     return(Y)
   }
@@ -116,8 +89,6 @@ image_conversion <- function(dir_path, width, height){
     
     # Преобразование в черно-белое
     img_gray <- channel(img_resized, "gray")
-    # par(mfrow=c(2, 10))
-    
     # Получение матрицы размера weight x height
     img_matrix <- img_gray@.Data
     img_matrix <- rotate(img_matrix, 90)
@@ -132,20 +103,23 @@ return(img_matrix)
 
 # Подготовка обучающей выборки
 trainData <- image_conversion("fot", 100, 100)
+# Подготовка для печати 3-х строк по 10 изображений
+par(mar=c(0.1,0.1,0.1,0.1))
+par(mfrow=c(3, 10))
+for (i in 1:10)
+  image(1-matrix(trainData[i,], nrow = 100))
 # Обучение ограниченной машины Больцмана
 set.seed(55)
 # Подготовка для печати 2-х строк по 10 изображений
-mod <- RBM(trainData, n.iter=400, n.hidden=196)
-par(mar=c(1,1,1,1))
-par(mfrow=c(2, 10))
+mod <- RBM(trainData, n.iter=500, n.hidden=196)
 # Реконструкция 10 реконструрированных изображений (hidden = 196)
 for (i in 1:10)
-  image(ResultRBM(trainData[i, ], model=mod))
+  image(1-ResultRBM(trainData[i, ], model=mod))
 # Обучение стека ограниченных машин Больцмана
 set.seed(55)
-modCat <- StackRBM(x = trainData, n.iter = 400, 
+modCat <- StackRBM(x = trainData, n.iter = 500, 
                    layers = c(392, 196, 98), learning.rate = 0.1, 
                    size.minibatch = 10, lambda = 0.1, momentum = 0.5)
 # Реконструкция 10 реконструрированных изображений (hidden = 98)
 for (i in 1:10)
-  image(ResultRBM(trainData[i, ], model=modCat, layers = 3))
+  image(1-ResultRBM(trainData[i, ], model=modCat, layers = 3))
