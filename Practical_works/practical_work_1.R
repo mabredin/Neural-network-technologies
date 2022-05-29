@@ -18,10 +18,11 @@ for (i in 1:16) {
   n3<- (xor(n2,x4[i]))
   n[i]<- !(n3)
 }
+n <- c(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 #визуализация результата
 plot(n,type='l',col='red',lwd=7)
-set.seed(35)
-Nnet<-nnet(x,n,size=2,linout=TRUE, rang=0.22)
+set.seed(5)
+Nnet<-nnet(x,n,size=0,linout=TRUE, threshold = 0.0006,rep=5)
 library(NeuralNetTools)
 plotnet(Nnet)
 predict(Nnet,x)
